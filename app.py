@@ -32,14 +32,5 @@ if city:
         )
         weather = requests.get(weather_url).json()
 
-        temp = weather["current"]["temperature_2m"]
-        rain_today = weather["daily"]["rain_sum"][0]
-
-        # Step 3: Display results
-        col1, col2 = st.columns(2)
-
-        with col1:
-            st.metric(label="🌡️ Current Temperature", value=f"{temp}°F")
-
-        with col2:
-            st.metric(label="🌧️ Today's Rainfall", value=f"{rain_today} mm")
+        # Debug: show raw API response
+        st.write("Raw API response:", weather)
