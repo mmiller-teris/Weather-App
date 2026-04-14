@@ -33,7 +33,7 @@ def get_nearest_station(lat, lon):
     return station_id
 
 def get_noaa_temperatures(station_id):
-    url = f"https://api.weather.gov/stations/{station_id}/observations?limit=240"
+    url = f"https://api.weather.gov/stations/{station_id}/observations?limit=500"
     response = requests.get(url, headers=HEADERS).json()
     observations = response["features"]
 
@@ -55,7 +55,7 @@ def get_noaa_temperatures(station_id):
 
 def get_rainfall(lat, lon):
     end_date = (datetime.now() - timedelta(days=1)).strftime("%Y-%m-%d")
-    start_date = (datetime.now() - timedelta(days=10)).strftime("%Y-%m-%d")
+    start_date = (datetime.now() - timedelta(days=11)).strftime("%Y-%m-%d")
     url = (
         f"https://archive-api.open-meteo.com/v1/archive"
         f"?latitude={lat}&longitude={lon}"
@@ -132,10 +132,17 @@ if city:
                     fillcolor="rgba(59,139,212,0.1)",
                     yaxis="y1"
                 ))
-                fig.add_trace(go.Bar(
+                fig.add_trace(go.Scatter(
                     x=rain_dates, y=precips,
                     name="Rainfall (in)",
-                    marker_color="rgba(59,139,212,0.4)",
+                    line=dict(color="#1D9E75", width=2),
+                    yaxis="y2"
+                ))
+                fig.add_trace(go.Scatter(
+                    x=[rain_dates[0], rain_dates[-1]],
+                    y=[5, 5],
+                    name="24hr High (5 in)",
+                    line=dict(color="#1D9E75", width=1, dash="dash"),
                     yaxis="y2"
                 ))
                 fig.update_layout(
@@ -146,14 +153,14 @@ if city:
                         tickfont=dict(color="#E8593C")
                     ),
                     yaxis2=dict(
-                        title=dict(text="Rainfall (inches)", font=dict(color="#3B8BD4")),
-                        tickfont=dict(color="#3B8BD4"),
+                        title=dict(text="Rainfall (inches)", font=dict(color="#1D9E75")),
+                        tickfont=dict(color="#1D9E75"),
                         overlaying="y",
-                        side="right"
+                        side="right",
+                        range=[0, 6]
                     ),
                     legend=dict(orientation="h"),
-                    height=400,
-                    barmode="overlay"
+                    height=400
                 )
                 st.plotly_chart(fig, use_container_width=True)
 
