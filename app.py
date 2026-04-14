@@ -142,13 +142,11 @@ if city:
                     title="10 Day Temperature & Rainfall History",
                     xaxis_title="Date",
                     yaxis=dict(
-                        title="Temperature (°F)",
-                        titlefont=dict(color="#E8593C"),
+                        title=dict(text="Temperature (°F)", font=dict(color="#E8593C")),
                         tickfont=dict(color="#E8593C")
                     ),
                     yaxis2=dict(
-                        title="Rainfall (inches)",
-                        titlefont=dict(color="#3B8BD4"),
+                        title=dict(text="Rainfall (inches)", font=dict(color="#3B8BD4")),
                         tickfont=dict(color="#3B8BD4"),
                         overlaying="y",
                         side="right"
