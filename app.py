@@ -13,7 +13,7 @@ def celsius_to_fahrenheit(c):
 
 def mm_to_inches(mm):
     if mm is None:
-        return None
+        return 0
     return round(mm / 25.4, 2)
 
 def get_coordinates(city):
@@ -96,3 +96,63 @@ if city:
                 with col1:
                     st.metric(label="🌡️ Current Temp", value=f"{temp_f}°F")
                 with col2:
+                    st.metric(label="🌧️ Precipitation", value=f"{mm_to_inches(float(precip_mm))} in")
+                with col3:
+                    st.metric(label="🌥️ Conditions", value=description)
+
+                st.divider()
+                st.subheader("📊 Last 10 Days")
+
+                # Temperature data from NOAA
+                station_id = get_nearest_station(lat, lon)
+                temp_data = get_noaa_temperatures(station_id)
+                temp_dates = sorted(temp_data.keys())
+                highs = [temp_data[d]["high"] for d in temp_dates]
+                lows = [temp_data[d]["low"] for d in temp_dates]
+
+                # Rainfall data from Open-Meteo archive
+                rain_data = get_rainfall(lat, lon)
+                rain_dates = sorted(rain_data.keys())
+                precips = [rain_data[d] for d in rain_dates]
+
+                # Temperature chart
+                fig_temp = go.Figure()
+                fig_temp.add_trace(go.Scatter(
+                    x=temp_dates, y=highs,
+                    name="High °F",
+                    line=dict(color="#E8593C", width=2),
+                    fill=None
+                ))
+                fig_temp.add_trace(go.Scatter(
+                    x=temp_dates, y=lows,
+                    name="Low °F",
+                    line=dict(color="#3B8BD4", width=2),
+                    fill="tonexty",
+                    fillcolor="rgba(59,139,212,0.1)"
+                ))
+                fig_temp.update_layout(
+                    title="Daily High / Low Temperature (°F)",
+                    xaxis_title="Date",
+                    yaxis_title="Temperature (°F)",
+                    legend=dict(orientation="h"),
+                    height=350
+                )
+                st.plotly_chart(fig_temp, use_container_width=True)
+
+                # Rainfall chart
+                fig_rain = go.Figure()
+                fig_rain.add_trace(go.Bar(
+                    x=rain_dates, y=precips,
+                    name="Rainfall (in)",
+                    marker_color="#3B8BD4"
+                ))
+                fig_rain.update_layout(
+                    title="Daily Rainfall Total (inches)",
+                    xaxis_title="Date",
+                    yaxis_title="Rainfall (inches)",
+                    height=300
+                )
+                st.plotly_chart(fig_rain, use_container_width=True)
+
+            except Exception as e:
+                st.error(f"Something went wrong: {e}")
