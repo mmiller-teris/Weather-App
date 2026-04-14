@@ -138,13 +138,6 @@ if city:
                     line=dict(color="#1D9E75", width=2),
                     yaxis="y2"
                 ))
-                fig.add_trace(go.Scatter(
-                    x=[rain_dates[0], rain_dates[-1]],
-                    y=[5, 5],
-                    name="24hr High (5 in)",
-                    line=dict(color="#1D9E75", width=1, dash="dash"),
-                    yaxis="y2"
-                ))
                 fig.update_layout(
                     title="10 Day Temperature & Rainfall History",
                     xaxis_title="Date",
@@ -156,8 +149,7 @@ if city:
                         title=dict(text="Rainfall (inches)", font=dict(color="#1D9E75")),
                         tickfont=dict(color="#1D9E75"),
                         overlaying="y",
-                        side="right",
-                        range=[0, 6]
+                        side="right"
                     ),
                     legend=dict(orientation="h"),
                     height=400
