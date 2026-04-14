@@ -7,30 +7,28 @@ st.write("Enter a city to see the current temperature and today's rainfall.")
 city = st.text_input("City name", placeholder="e.g. Austin, London, Tokyo")
 
 if city:
-    # Step 1: Look up city coordinates
-    geo_url = f"https://geocoding-api.open-meteo.com/v1/search?name={city}&count=1"
-    geo_response = requests.get(geo_url).json()
+    url = f"https://wttr.in/{city}?format=j1"
+    response = requests.get(url)
 
-    if "results" not in geo_response:
+    if response.status_code != 200:
         st.error("City not found. Please check the spelling and try again.")
     else:
-        location = geo_response["results"][0]
-        lat = location["latitude"]
-        lon = location["longitude"]
-        country = location["country"]
+        data = response.json()
 
-        st.subheader(f"📍 {location['name']}, {country}")
+        current = data["current_condition"][0]
+        nearest = data["nearest_area"][0]
 
-        # Step 2: Fetch weather data
-        weather_url = (
-            f"https://api.open-meteo.com/v1/forecast"
-            f"?latitude={lat}&longitude={lon}"
-            f"&current=temperature_2m,rain"
-            f"&daily=rain_sum"
-            f"&temperature_unit=fahrenheit"
-            f"&timezone=auto"
-        )
-        weather = requests.get(weather_url).json()
+        city_name = nearest["areaName"][0]["value"]
+        country = nearest["country"][0]["value"]
+        temp_f = current["temp_F"]
+        rain_mm = current["precipMM"]
 
-        # Debug: show raw API response
-        st.write("Raw API response:", weather)
+        st.subheader(f"📍 {city_name}, {country}")
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.metric(label="🌡️ Current Temperature", value=f"{temp_f}°F")
+
+        with col2:
+            st.metric(label="🌧️ Today's Rainfall", value=f"{rain_mm} mm")
