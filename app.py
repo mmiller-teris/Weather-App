@@ -115,29 +115,49 @@ if city:
                 rain_dates = sorted(rain_data.keys())
                 precips = [rain_data[d] for d in rain_dates]
 
-                # Temperature chart
-                fig_temp = go.Figure()
-                fig_temp.add_trace(go.Scatter(
+                # Combined chart with dual y-axis
+                fig = go.Figure()
+
+                fig.add_trace(go.Scatter(
                     x=temp_dates, y=highs,
                     name="High °F",
                     line=dict(color="#E8593C", width=2),
-                    fill=None
+                    yaxis="y1"
                 ))
-                fig_temp.add_trace(go.Scatter(
+                fig.add_trace(go.Scatter(
                     x=temp_dates, y=lows,
                     name="Low °F",
                     line=dict(color="#3B8BD4", width=2),
                     fill="tonexty",
-                    fillcolor="rgba(59,139,212,0.1)"
+                    fillcolor="rgba(59,139,212,0.1)",
+                    yaxis="y1"
                 ))
-                fig_temp.update_layout(
-                    title="Daily High / Low Temperature (°F)",
+                fig.add_trace(go.Bar(
+                    x=rain_dates, y=precips,
+                    name="Rainfall (in)",
+                    marker_color="rgba(59,139,212,0.4)",
+                    yaxis="y2"
+                ))
+                fig.update_layout(
+                    title="10 Day Temperature & Rainfall History",
                     xaxis_title="Date",
-                    yaxis_title="Temperature (°F)",
+                    yaxis=dict(
+                        title="Temperature (°F)",
+                        titlefont=dict(color="#E8593C"),
+                        tickfont=dict(color="#E8593C")
+                    ),
+                    yaxis2=dict(
+                        title="Rainfall (inches)",
+                        titlefont=dict(color="#3B8BD4"),
+                        tickfont=dict(color="#3B8BD4"),
+                        overlaying="y",
+                        side="right"
+                    ),
                     legend=dict(orientation="h"),
-                    height=350
+                    height=400,
+                    barmode="overlay"
                 )
-                st.plotly_chart(fig_temp, use_container_width=True)
+                st.plotly_chart(fig, use_container_width=True)
 
                 # Rainfall chart
                 fig_rain = go.Figure()
