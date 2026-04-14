@@ -164,20 +164,5 @@ if city:
                 )
                 st.plotly_chart(fig, use_container_width=True)
 
-                # Rainfall chart
-                fig_rain = go.Figure()
-                fig_rain.add_trace(go.Bar(
-                    x=rain_dates, y=precips,
-                    name="Rainfall (in)",
-                    marker_color="#3B8BD4"
-                ))
-                fig_rain.update_layout(
-                    title="Daily Rainfall Total (inches)",
-                    xaxis_title="Date",
-                    yaxis_title="Rainfall (inches)",
-                    height=300
-                )
-                st.plotly_chart(fig_rain, use_container_width=True)
-
             except Exception as e:
                 st.error(f"Something went wrong: {e}")
